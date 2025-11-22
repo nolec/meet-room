@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>너브스 - 구독 관리 플랫폼 구조 분석</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .section:hover {
+        transform: translateY(-5px);
+      }
+
+      .section h2 {
+        color: #4a5568;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 10px;
+      }
+
+      .section h3 {
+        color: #2d3748;
+        font-size: 1.5rem;
+        margin: 20px 0 10px 0;
+      }
+
+      .file-tree {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.8;
+        overflow-x: auto;
+        white-space: pre;
+      }
+
+      .file-tree pre {
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+
+      .file-tree .folder {
+        color: #3182ce;
+        font-weight: bold;
+      }
+
+      .file-tree .file {
+        color: #38a169;
+      }
+
+      .file-tree .api {
+        color: #d53f8c;
+      }
+
+      .file-tree .component {
+        color: #9f7aea;
+      }
+
+      .file-tree .hook {
+        color: #ed8936;
+      }
+
+      .file-tree .type {
+        color: #38b2ac;
+      }
+
+      .code-block {
+        background: #1a202c;
+        color: #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        overflow-x: auto;
+        margin: 15px 0;
+      }
+
+      .code-block pre {
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: 1.6;
+        white-space: pre;
+      }
+
+      .highlight {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .flow-diagram {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .flow-step {
+        background: #667eea;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 25px;
+        text-align: center;
+        flex: 1;
+        min-width: 150px;
+        font-weight: bold;
+      }
+
+      .arrow {
+        font-size: 2rem;
+        color: #667eea;
+      }
+
+      .tech-stack {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .tech-item {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .tech-item:hover {
+        border-color: #667eea;
+        transform: translateY(-3px);
+      }
+
+      .tech-item h4 {
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+
+      .security-layer {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .layer {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .layer:nth-child(1) {
+        background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+      }
+      .layer:nth-child(2) {
+        background: linear-gradient(90deg, #4ecdc4, #44a08d);
+      }
+      .layer:nth-child(3) {
+        background: linear-gradient(90deg, #45b7d1, #96c93d);
+      }
+      .layer:nth-child(4) {
+        background: linear-gradient(90deg, #f093fb, #f5576c);
+      }
+      .layer:nth-child(5) {
+        background: linear-gradient(90deg, #4facfe, #00f2fe);
+      }
+
+      /* 리스트 스타일 조정 */
+      ul {
+        padding-left: 0;
+        margin-left: 0;
+        list-style: none;
+      }
+
+      ul li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 8px;
+      }
+
+      ul li::before {
+        content: "•";
+        color: #667eea;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .flow-diagram {
+          flex-direction: column;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🚀 Subwatch</h1>
+        <p>구독 관리 플랫폼 - 프로젝트 구조 완전 분석</p>
+      </div>
+
+      <!-- 프로젝트 구조 -->
+      <div class="section">
+        <h2>📁 프로젝트 구조</h2>
+        <div class="file-tree">
+          <pre>sub-man/
+├── <span class="folder">src/</span>
+│   ├── <span class="folder">app/</span>                    # Next.js App Router
+│   │   ├── <span class="folder">api/</span>               # API Routes (백엔드)
+│   │   │   ├── <span class="folder">auth/</span>          # 인증 API
+│   │   │   │   ├── <span class="api">login/route.ts</span>
+│   │   │   │   ├── <span class="api">register/route.ts</span>
+│   │   │   │   └── <span class="api">logout/route.ts</span>
+│   │   │   └── <span class="folder">subscriptions/</span>  # 구독 관리 API
+│   │   │       ├── <span class="api">route.ts</span>   # GET, POST
+│   │   │       └── <span class="api">[id]/route.ts</span> # GET, PUT, DELETE
+│   │   ├── <span class="folder">dashboard/</span>         # 대시보드 페이지
+│   │   │   ├── <span class="file">page.tsx</span>      # Server Component (SSR 인증)
+│   │   │   └── <span class="file">DashboardClient.tsx</span> # Client Component
+│   │   ├── <span class="folder">login/</span>             # 로그인 페이지
+│   │   │   ├── <span class="file">page.tsx</span>      # Server Component (SSR 리다이렉트)
+│   │   │   └── <span class="file">LoginClient.tsx</span>   # Client Component
+│   │   ├── <span class="folder">register/</span>          # 회원가입 페이지
+│   │   │   └── <span class="file">page.tsx</span>
+│   │   ├── <span class="folder">offline/</span>           # PWA 오프라인 페이지
+│   │   │   └── <span class="file">page.tsx</span>
+│   │   ├── <span class="file">layout.tsx</span>         # 루트 레이아웃 (ErrorProvider 포함)
+│   │   ├── <span class="file">page.tsx</span>           # 홈페이지
+│   │   ├── <span class="file">globals.css</span>        # 글로벌 스타일
+│   │   └── <span class="file">manifest.ts</span>        # PWA 매니페스트
+│   ├── <span class="folder">components/</span>            # React 컴포넌트
+│   │   ├── <span class="folder">ui/</span>               # 디자인 시스템
+│   │   │   ├── <span class="component">Alert.tsx</span>
+│   │   │   ├── <span class="component">Badge.tsx</span>
+│   │   │   ├── <span class="component">Button.tsx</span>
+│   │   │   ├── <span class="component">Card.tsx</span>
+│   │   │   ├── <span class="component">Input.tsx</span>
+│   │   │   ├── <span class="component">Link.tsx</span>
+│   │   │   ├── <span class="component">Loading.tsx</span>
+│   │   │   ├── <span class="component">types.ts</span>
+│   │   │   └── <span class="component">index.ts</span>
+│   │   ├── <span class="component">ErrorToast.tsx</span>  # 에러 토스트
+│   │   └── <span class="component">theme-toggle.tsx</span>   # 다크모드 토글
+│   ├── <span class="folder">contexts/</span>              # React Context
+│   │   └── <span class="context">ErrorContext.tsx</span>  # 에러 관리 컨텍스트
+│   ├── <span class="folder">hooks/</span>                 # 커스텀 훅
+│   │   ├── <span class="hook">useAuth.ts</span>         # 인증 훅
+│   │   ├── <span class="hook">useErrorHandler.ts</span>  # 에러 처리 훅
+│   │   ├── <span class="hook">useMounted.ts</span>      # 마운트 상태 훅
+│   │   ├── <span class="hook">useSubscriptions.ts</span> # 구독 관리 훅
+│   │   ├── <span class="hook">useTheme.ts</span>        # 테마 훅
+│   │   └── <span class="hook">index.ts</span>           # 훅 export
+│   ├── <span class="folder">lib/</span>                   # 유틸리티 라이브러리
+│   │   ├── <span class="folder">auth/</span>              # 서버 사이드 인증
+│   │   │   └── <span class="file">server.ts</span>      # SSR 인증 가드
+│   │   ├── <span class="folder">supabase/</span>          # Supabase 클라이언트
+│   │   │   ├── <span class="file">client.ts</span>      # 클라이언트 사이드
+│   │   │   └── <span class="file">server.ts</span>       # 서버 사이드
+│   │   ├── <span class="folder">database/</span>          # 데이터베이스 스키마
+│   │   │   └── <span class="file">schema.sql</span>     # SQL 스키마
+│   │   └── <span class="file">utils.ts</span>           # 유틸리티 함수
+│   ├── <span class="folder">types/</span>                 # TypeScript 타입
+│   │   ├── <span class="type">database.ts</span>        # DB 타입 정의
+│   │   ├── <span class="type">api.ts</span>             # API 타입 정의
+│   │   ├── <span class="type">error.ts</span>           # 에러 타입 정의
+│   │   └── <span class="type">theme.ts</span>           # 테마 타입
+│   └── <span class="folder">utils/</span>                 # 유틸리티 함수
+│       └── <span class="file">auth.ts</span>            # 인증 유틸리티
+├── <span class="folder">public/</span>                    # 정적 파일
+│   ├── <span class="folder">common/</span>               # 공통 스크립트
+│   │   └── <span class="file">register-sw.js</span>   # 서비스 워커 등록
+│   └── <span class="file">sw.js</span>                # 서비스 워커
+└── <span class="file">package.json</span>             # 의존성 관리</pre>
+        </div>
+      </div>
+
+      <!-- 기술 스택 -->
+      <div class="section">
+        <h2>🛠️ 기술 스택</h2>
+        <div class="tech-stack">
+          <div class="tech-item">
+            <h4>Next.js 15</h4>
+            <p>App Router<br />서버/클라이언트 컴포넌트<br />API Routes</p>
+          </div>
+          <div class="tech-item">
+            <h4>Supabase</h4>
+            <p>PostgreSQL<br />실시간 DB<br />인증 시스템</p>
+          </div>
+          <div class="tech-item">
+            <h4>TypeScript</h4>
+            <p>타입 안전성<br />컴파일 타임 에러<br />자동완성</p>
+          </div>
+          <div class="tech-item">
+            <h4>Tailwind CSS</h4>
+            <p>유틸리티 CSS<br />반응형 디자인<br />다크모드</p>
+          </div>
+          <div class="tech-item">
+            <h4>PWA</h4>
+            <p>오프라인 지원<br />앱 설치<br />서비스 워커</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 인증 시스템 -->
+      <div class="section">
+        <h2>🔐 인증 시스템</h2>
+        <h3>Supabase Auth 구조</h3>
+        <div class="code-block">
+          <pre>
+// 클라이언트 사이드 (브라우저)
+const supabase = createClient()
+await supabase.auth.signInWithPassword({ email, password })
+
+// 서버 사이드 (API Routes)
+const supabase = await createClient()
+const { data: { user } } = await supabase.auth.getUser()</pre
+          >
+        </div>
+
+        <h3>인증 플로우</h3>
+        <div class="flow-diagram">
+          <div class="flow-step">1. 사용자 로그인</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">2. JWT 토큰 생성</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">3. 쿠키 저장</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">4. API 인증</div>
+        </div>
+      </div>
+
+      <!-- 데이터베이스 -->
+      <!-- 새로운 기능들 -->
+      <div class="section">
+        <h2>🆕 최신 기능들</h2>
+
+        <h3>🔐 SSR 기반 인증 가드</h3>
+        <div class="code-block">
+          <pre>
+// 서버 사이드에서 인증 확인 및 리다이렉트
+export async function requireAuth() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session?.user) {
+    redirect("/login");  // 플리커링 없는 즉시 리다이렉트
+  }
+  
+  return session.user;
+}
+
+// 이미 로그인된 사용자 리다이렉트
+export async function redirectIfAuthenticated(redirectTo = "/dashboard") {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (session?.user) {
+    redirect(redirectTo);
+  }
+}</pre
+          >
+        </div>
+
+        <h3>🎨 디자인 시스템</h3>
+        <div class="code-block">
+          <pre>
+// 재사용 가능한 UI 컴포넌트들
+- Button (primary, secondary, outline, ghost)
+- Input (다양한 variant와 size)
+- Card (Header, Body, Footer)
+- Badge (success, warning, danger, primary)
+- Alert (info, warning, error, success)
+- Loading (Spinner, Screen)
+- CustomLink (Next.js Link 래퍼)</pre
+          >
+        </div>
+
+        <h3>🚨 중앙집중식 에러 처리</h3>
+        <div class="code-block">
+          <pre>
+// ErrorContext + ErrorToast 시스템
+- 전역 에러 상태 관리
+- 자동 토스트 알림 (5초 후 사라짐)
+- 에러 타입별 분류 (auth, validation, server, network)
+- Supabase/API 에러 자동 처리
+- 개발자 친화적 에러 로깅</pre
+          >
+        </div>
+
+        <h3>📱 PWA 기능</h3>
+        <div class="code-block">
+          <pre>
+// Progressive Web App 기능
+- 오프라인 페이지 지원
+- 서비스 워커 자동 등록
+- 앱 설치 가능 (manifest.ts)
+- 다크/라이트 모드 지원
+- 반응형 디자인</pre
+          >
+        </div>
+      </div>
+
+      <!-- 데이터베이스 구조 -->
+      <div class="section">
+        <h2>🗄️ 데이터베이스 구조</h2>
+        <h3>핵심 테이블</h3>
+        <div class="code-block">
+          <pre>
+-- 사용자 프로필
+profiles (
+  id (UUID, PK), email, name, 
+  created_at, updated_at
+)
+
+-- 사용자 설정
+user_preferences (
+  id, user_id (FK), theme, language, 
+  notification_settings, created_at, updated_at
+)
+
+-- 구독 테이블 (메인)
+subscriptions (
+  id (UUID, PK), user_id (FK), service_name, 
+  plan_name, price, currency, billing_cycle, 
+  next_billing_date, status, source, metadata, 
+  created_at, updated_at
+)
+
+-- 구독 히스토리 (가격 변동 추적)
+subscription_history (
+  id, subscription_id (FK), old_price, 
+  new_price, changed_at, reason
+)
+
+-- 알림 설정
+notifications (
+  id, user_id (FK), subscription_id (FK), 
+  type, days_before, is_enabled, channels
+)</pre
+          >
+        </div>
+
+        <h3>RLS (Row Level Security)</h3>
+        <div class="highlight">
+          <strong>보안 정책:</strong> 사용자는 자신의 데이터만 접근 가능<br />
+          <code
+            >-- 프로필 테이블 CREATE POLICY "Users can view own profile" ON
+            profiles FOR SELECT USING (auth.uid() = id); CREATE POLICY "Users
+            can insert own profile" ON profiles FOR INSERT WITH CHECK
+            (auth.uid() = id); -- 구독 테이블 CREATE POLICY "Users can view own
+            subscriptions" ON subscriptions FOR SELECT USING (auth.uid() =
+            user_id); CREATE POLICY "Users can manage own subscriptions" ON
+            subscriptions FOR ALL USING (auth.uid() = user_id); -- 사용자 설정
+            CREATE POLICY "Users can manage own preferences" ON user_preferences
+            FOR ALL USING (auth.uid() = user_id);</code
+          >
+        </div>
+      </div>
+
+      <!-- API 구조 -->
+      <div class="section">
+        <h2>🚀 API 구조</h2>
+        <h3>RESTful API 패턴</h3>
+        <div class="code-block">
+          <pre>
+// 구독 관리 API
+GET    /api/subscriptions        # 목록 조회
+POST   /api/subscriptions        # 생성
+GET    /api/subscriptions/[id]   # 단일 조회
+PUT    /api/subscriptions/[id]   # 수정
+DELETE /api/subscriptions/[id]   # 삭제
+
+// 인증 API
+POST   /api/auth/login          # 로그인
+POST   /api/auth/register       # 회원가입
+POST   /api/auth/logout         # 로그아웃</pre
+          >
+        </div>
+
+        <h3>타입 안전성</h3>
+        <div class="code-block">
+          <pre>
+// 요청 타입
+interface CreateSubscriptionRequest {
+  service_name: string;
+  price: number;
+  billing_cycle: 'weekly' | 'monthly' | 'yearly';
+}
+
+// 응답 타입
+interface SubscriptionResponse {
+  subscription: Subscription;
+}</pre
+          >
+        </div>
+      </div>
+
+      <!-- 프론트엔드 구조 -->
+      <div class="section">
+        <h2>🎨 프론트엔드 구조</h2>
+        <h3>React 훅 패턴</h3>
+        <div class="code-block">
+          <pre>
+// 상태 관리 + API 호출을 하나로
+const { subscriptions, loading, createSubscription } = useSubscriptions();
+
+// 인증 상태 관리
+const { user, signIn, signOut } = useAuth();</pre
+          >
+        </div>
+
+        <h3>컴포넌트 구조</h3>
+        <div class="code-block">
+          <pre>
+// 서버 컴포넌트 (기본)
+export default function Page() { /* 서버에서 렌더링 */ }
+
+// 클라이언트 컴포넌트 (상호작용)
+"use client";
+export default function InteractiveComponent() { /* 브라우저에서 렌더링 */ }</pre
+          >
+        </div>
+      </div>
+
+      <!-- 데이터 플로우 -->
+      <div class="section">
+        <h2>🔄 데이터 플로우</h2>
+        <h3>구독 추가 플로우</h3>
+        <div class="flow-diagram">
+          <div class="flow-step">1. 폼 입력</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">2. 훅 호출</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">3. API 요청</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">4. DB 저장</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">5. 상태 업데이트</div>
+        </div>
+
+        <h3>인증 플로우</h3>
+        <div class="flow-diagram">
+          <div class="flow-step">1. 로그인 폼</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">2. Supabase Auth</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">3. JWT 토큰</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">4. 쿠키 저장</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">5. 자동 인증</div>
+        </div>
+      </div>
+
+      <!-- 보안 계층 -->
+      <div class="section">
+        <h2>🛡️ 보안 계층</h2>
+        <div class="security-layer">
+          <div class="layer">1. 프론트엔드 (React 컴포넌트, 훅)</div>
+          <div class="layer">2. API 레이어 (Next.js API Routes)</div>
+          <div class="layer">3. 인증 (Supabase Auth JWT)</div>
+          <div class="layer">4. 데이터베이스 (PostgreSQL + RLS)</div>
+          <div class="layer">5. 타입 안전성 (TypeScript)</div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념 -->
+      <div class="section">
+        <h2>💡 핵심 개념</h2>
+        <h3>Next.js App Router</h3>
+        <ul>
+          <li><strong>서버 컴포넌트:</strong> 기본적으로 서버에서 렌더링</li>
+          <li>
+            <strong>클라이언트 컴포넌트:</strong> "use client" 지시어 필요
+          </li>
+          <li><strong>API Routes:</strong> app/api/ 폴더에 함수 export</li>
+          <li><strong>라우팅:</strong> 폴더 구조 = URL 구조</li>
+        </ul>
+
+        <h3>Supabase</h3>
+        <ul>
+          <li><strong>실시간 DB:</strong> PostgreSQL + 실시간 기능</li>
+          <li><strong>인증:</strong> JWT 기반, 자동 토큰 관리</li>
+          <li><strong>RLS:</strong> 데이터베이스 레벨 보안</li>
+          <li><strong>클라이언트/서버:</strong> 환경별 클라이언트 분리</li>
+        </ul>
+
+        <h3>TypeScript</h3>
+        <ul>
+          <li><strong>타입 안전성:</strong> 컴파일 타임 에러 방지</li>
+          <li><strong>인터페이스:</strong> API 계약 정의</li>
+          <li><strong>제네릭:</strong> 재사용 가능한 타입</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>🎯 결론</h2>
+        <div class="highlight">
+          <h3>
+            이 구조로 확장 가능하고 안전한 구독 관리 플랫폼을 만들었습니다!
+          </h3>
+          <p>• <strong>확장성:</strong> 모듈화된 구조로 기능 추가 용이</p>
+          <p>• <strong>안전성:</strong> 다층 보안 시스템</p>
+          <p>• <strong>타입 안전성:</strong> TypeScript로 런타임 에러 방지</p>
+          <p>• <strong>사용자 경험:</strong> PWA로 앱과 같은 경험</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
