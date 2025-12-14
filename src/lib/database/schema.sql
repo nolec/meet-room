@@ -130,42 +130,54 @@ ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
 
 -- 프로필 RLS 정책
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 CREATE POLICY "Users can insert own profile" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can view other profiles" ON profiles;
 CREATE POLICY "Users can view other profiles" ON profiles
   FOR SELECT USING (true); -- 모든 사용자 프로필 조회 가능
 
 -- 카페/가게 RLS 정책
+DROP POLICY IF EXISTS "Anyone can view places" ON places;
 CREATE POLICY "Anyone can view places" ON places
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Anyone can create places" ON places;
 CREATE POLICY "Anyone can create places" ON places
   FOR INSERT WITH CHECK (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Creators can update places" ON places;
 CREATE POLICY "Creators can update places" ON places
   FOR UPDATE USING (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Creators can delete places" ON places;
 CREATE POLICY "Creators can delete places" ON places
   FOR DELETE USING (auth.uid() = created_by);
 
 -- 방 RLS 정책
+DROP POLICY IF EXISTS "Anyone can view active rooms" ON rooms;
 CREATE POLICY "Anyone can view active rooms" ON rooms
   FOR SELECT USING (is_active = true OR auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Anyone can create rooms" ON rooms;
 CREATE POLICY "Anyone can create rooms" ON rooms
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Creators can update rooms" ON rooms;
 CREATE POLICY "Creators can update rooms" ON rooms
   FOR UPDATE USING (auth.uid() = created_by);
 
 -- 방 참여자 RLS 정책
+DROP POLICY IF EXISTS "Participants can view room participants" ON room_participants;
 CREATE POLICY "Participants can view room participants" ON room_participants
   FOR SELECT USING (
     EXISTS (
@@ -176,13 +188,16 @@ CREATE POLICY "Participants can view room participants" ON room_participants
     )
   );
 
+DROP POLICY IF EXISTS "Users can join rooms" ON room_participants;
 CREATE POLICY "Users can join rooms" ON room_participants
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can leave rooms" ON room_participants;
 CREATE POLICY "Users can leave rooms" ON room_participants
   FOR UPDATE USING (auth.uid() = user_id);
 
 -- 채팅 메시지 RLS 정책
+DROP POLICY IF EXISTS "Participants can view messages" ON messages;
 CREATE POLICY "Participants can view messages" ON messages
   FOR SELECT USING (
     EXISTS (
@@ -193,6 +208,7 @@ CREATE POLICY "Participants can view messages" ON messages
     )
   );
 
+DROP POLICY IF EXISTS "Participants can send messages" ON messages;
 CREATE POLICY "Participants can send messages" ON messages
   FOR INSERT WITH CHECK (
     auth.uid() = user_id AND
@@ -205,22 +221,28 @@ CREATE POLICY "Participants can send messages" ON messages
   );
 
 -- 관심 표현 RLS 정책
+DROP POLICY IF EXISTS "Users can view own interests" ON interests;
 CREATE POLICY "Users can view own interests" ON interests
   FOR SELECT USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
 
+DROP POLICY IF EXISTS "Users can express interest" ON interests;
 CREATE POLICY "Users can express interest" ON interests
   FOR INSERT WITH CHECK (auth.uid() = from_user_id);
 
+DROP POLICY IF EXISTS "Users can update received interests" ON interests;
 CREATE POLICY "Users can update received interests" ON interests
   FOR UPDATE USING (auth.uid() = to_user_id);
 
 -- 매칭 RLS 정책
+DROP POLICY IF EXISTS "Users can view own matches" ON matches;
 CREATE POLICY "Users can view own matches" ON matches
   FOR SELECT USING (auth.uid() = user1_id OR auth.uid() = user2_id);
 
 -- 신고 RLS 정책
+DROP POLICY IF EXISTS "Users can report others" ON reports;
 CREATE POLICY "Users can report others" ON reports
   FOR INSERT WITH CHECK (auth.uid() = reporter_user_id);
 
+DROP POLICY IF EXISTS "Users can view own reports" ON reports;
 CREATE POLICY "Users can view own reports" ON reports
   FOR SELECT USING (auth.uid() = reporter_user_id);

@@ -1,17 +1,24 @@
 import { authRequired, AuthResult } from "@/lib/auth/middleware";
-import { NaverLocalService } from "@/services/naverLocalService";
+import { getIntParam } from "@/lib/utils";
+import { KakaoLocalService } from "@/services/kakaoLocalService";
 import { PlaceCategory } from "@/types/store";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/places/nearby - 네이버 API를 사용한 주변 가게 검색
-export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
+// 기본값 상수
+const DEFAULT_DISPLAY = 15;
+const DEFAULT_QUERY = "카페";
+const DEFAULT_PAGE = 1;
+
+// GET   - 카카오 API를 사용한 주변 가게 검색
+export const GET = authRequired(async (req: NextRequest, _auth: AuthResult) => {
   try {
     const { searchParams } = new URL(req.url);
-    const query = searchParams.get("query") || "카페";
+    const query = searchParams.get("query") || DEFAULT_QUERY;
     const latitude = searchParams.get("latitude");
     const longitude = searchParams.get("longitude");
     const category = searchParams.get("category");
-    const display = parseInt(searchParams.get("display") || "5");
+    const display = getIntParam(searchParams, "display", DEFAULT_DISPLAY);
+    const page = getIntParam(searchParams, "page", DEFAULT_PAGE);
 
     if (!latitude || !longitude) {
       return NextResponse.json(
@@ -20,26 +27,33 @@ export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
       );
     }
 
-    const naverService = new NaverLocalService();
+    const kakaoService = new KakaoLocalService();
 
-    let places;
+    let result;
     if (category) {
-      places = await naverService.searchByCategory(
+      result = await kakaoService.searchByCategory(
         category as PlaceCategory,
         parseFloat(latitude),
         parseFloat(longitude),
-        display
+        2000, // 2km 반경
+        display,
+        page
       );
     } else {
-      places = await naverService.searchNearbyPlaces(
+      result = await kakaoService.searchNearbyPlaces(
         query,
         parseFloat(latitude),
         parseFloat(longitude),
-        display
+        display,
+        page
       );
     }
 
-    return NextResponse.json({ places });
+    return NextResponse.json({
+      places: result.places,
+      isEnd: result.isEnd,
+      totalCount: result.totalCount,
+    });
   } catch (error) {
     console.error("주변 가게 검색 오류:", error);
     return NextResponse.json(

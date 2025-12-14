@@ -1,4 +1,5 @@
 import { authRequired, AuthResult } from "@/lib/auth/middleware";
+import { getIntParam } from "@/lib/utils";
 import { PlaceInsert, PlaceUpdate } from "@/types/database";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,6 +23,10 @@ function calculateDistance(
   return R * c;
 }
 
+// 기본값 상수
+const DEFAULT_LIMIT = 50;
+const DEFAULT_OFFSET = 0;
+
 // GET /api/places - 가게 목록 조회
 export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
   try {
@@ -29,8 +34,8 @@ export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
     const category = searchParams.get("category");
     const latitude = searchParams.get("latitude");
     const longitude = searchParams.get("longitude");
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const limit = getIntParam(searchParams, "limit", DEFAULT_LIMIT);
+    const offset = getIntParam(searchParams, "offset", DEFAULT_OFFSET);
 
     let query = auth.supabase
       .from("places")
@@ -152,4 +157,3 @@ export const POST = authRequired(async (req: NextRequest, auth: AuthResult) => {
     );
   }
 });
-

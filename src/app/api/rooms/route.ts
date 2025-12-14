@@ -1,6 +1,11 @@
 import { authRequired, AuthResult } from "@/lib/auth/middleware";
+import { getIntParam } from "@/lib/utils";
 import { RoomInsert, RoomUpdate } from "@/types/database";
 import { NextRequest, NextResponse } from "next/server";
+
+// 기본값 상수
+const DEFAULT_LIMIT = 50;
+const DEFAULT_OFFSET = 0;
 
 // GET /api/rooms - 방 목록 조회
 export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
@@ -8,8 +13,8 @@ export const GET = authRequired(async (req: NextRequest, auth: AuthResult) => {
     const { searchParams } = new URL(req.url);
     const place_id = searchParams.get("place_id");
     const is_active = searchParams.get("is_active");
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const limit = getIntParam(searchParams, "limit", DEFAULT_LIMIT);
+    const offset = getIntParam(searchParams, "offset", DEFAULT_OFFSET);
 
     let query = auth.supabase
       .from("rooms")
@@ -109,4 +114,3 @@ export const POST = authRequired(async (req: NextRequest, auth: AuthResult) => {
     );
   }
 });
-

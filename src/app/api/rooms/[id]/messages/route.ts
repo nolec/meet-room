@@ -1,7 +1,12 @@
 import { authRequired, AuthResult } from "@/lib/auth/middleware";
+import { getIntParam } from "@/lib/utils";
 import { MessageInsert } from "@/types/database";
 import { NextRequest, NextResponse } from "next/server";
 import { RouteParams } from "@/lib/auth/middleware";
+
+// 기본값 상수
+const DEFAULT_LIMIT = 50;
+const DEFAULT_OFFSET = 0;
 
 // GET /api/rooms/[id]/messages - 채팅 메시지 조회
 export const GET = authRequired(
@@ -33,8 +38,8 @@ export const GET = authRequired(
       }
 
       const { searchParams } = new URL(req.url);
-      const limit = parseInt(searchParams.get("limit") || "50");
-      const offset = parseInt(searchParams.get("offset") || "0");
+      const limit = getIntParam(searchParams, "limit", DEFAULT_LIMIT);
+      const offset = getIntParam(searchParams, "offset", DEFAULT_OFFSET);
 
       const { data: messages, error } = await auth.supabase
         .from("messages")
@@ -150,4 +155,3 @@ export const POST = authRequired(
     }
   }
 );
-
