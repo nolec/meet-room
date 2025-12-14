@@ -6,6 +6,7 @@ import { BaseComponentProps } from "./types";
 interface CardProps extends BaseComponentProps {
   hover?: boolean;
   interactive?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 interface CardHeaderProps extends BaseComponentProps {}
@@ -40,10 +41,7 @@ export function Card({
 export function CardHeader({ className, children, ...props }: CardHeaderProps) {
   return (
     <div
-      className={cn(
-        "px-4 py-5 sm:px-6 border-b border-border",
-        className
-      )}
+      className={cn("px-4 py-5 sm:px-6 border-b border-border", className)}
       {...props}
     >
       {children}
@@ -62,10 +60,7 @@ export function CardBody({ className, children, ...props }: CardBodyProps) {
 export function CardFooter({ className, children, ...props }: CardFooterProps) {
   return (
     <div
-      className={cn(
-        "px-4 py-4 sm:px-6 border-t border-border",
-        className
-      )}
+      className={cn("px-4 py-4 sm:px-6 border-t border-border", className)}
       {...props}
     >
       {children}
