@@ -75,3 +75,36 @@ export function CustomLink({
     </Link>
   );
 }
+
+// Button을 감쌀 때 사용하는 래퍼 (스타일 방해 없음)
+export function ButtonLink({
+  href,
+  children,
+  external = false,
+  ...props
+}: {
+  href: string;
+  children: React.ReactNode;
+  external?: boolean;
+  [key: string]: any;
+}) {
+  if (external) {
+    return (
+      <a
+        href={href}
+        className="contents"
+        target="_blank"
+        rel="noopener noreferrer"
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className="contents" {...props}>
+      {children}
+    </Link>
+  );
+}

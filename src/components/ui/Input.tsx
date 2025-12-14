@@ -24,11 +24,11 @@ export function Input({
   const inputId = id || name || generatedId;
 
   const baseClasses =
-    "block w-full border rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors";
+    "block w-full border rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors";
 
   const variantClasses = {
     default:
-      "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500",
+      "border-border focus:ring-[var(--ring)] focus:border-primary",
     error:
       "border-red-300 dark:border-red-600 focus:ring-red-500 focus:border-red-500",
     success:
@@ -46,7 +46,7 @@ export function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="block text-sm font-medium text-foreground"
         >
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}

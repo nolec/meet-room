@@ -21,7 +21,7 @@ export function Card({
   interactive = false,
   ...props
 }: CardProps) {
-  const baseClasses = "bg-white dark:bg-gray-800 shadow rounded-lg";
+  const baseClasses = "bg-background shadow rounded-lg";
   const hoverClasses = hover ? "hover:shadow-md transition-shadow" : "";
   const interactiveClasses = interactive
     ? "hover:shadow-md transition-all cursor-pointer hover:scale-[1.02]"
@@ -41,7 +41,7 @@ export function CardHeader({ className, children, ...props }: CardHeaderProps) {
   return (
     <div
       className={cn(
-        "px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700",
+        "px-4 py-5 sm:px-6 border-b border-border",
         className
       )}
       {...props}
@@ -63,7 +63,7 @@ export function CardFooter({ className, children, ...props }: CardFooterProps) {
   return (
     <div
       className={cn(
-        "px-4 py-4 sm:px-6 border-t border-gray-200 dark:border-gray-700",
+        "px-4 py-4 sm:px-6 border-t border-border",
         className
       )}
       {...props}

@@ -12,6 +12,7 @@
   --border: #e5e5e5;
   --input: #ffffff;
   --primary: #00d9a5;
+  --primary-hover: #00c896;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -20,7 +21,28 @@
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --ring: #00d9a5;
+  
+  /* Design tokens - Border radius */
   --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+  
+  /* Design tokens - Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* Design tokens - Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 @theme inline {
@@ -31,6 +53,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -42,32 +65,15 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --radius: var(--radius);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
 }
 
-/* Dark theme - prefers-color-scheme 방식 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark theme colors */
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --muted: #262626;
-    --muted-foreground: #a3a3a3;
-    --border: #262626;
-    --input: #262626;
-    --primary: #00d9a5;
-    --primary-foreground: #ffffff;
-    --secondary: #1e293b;
-    --secondary-foreground: #f8fafc;
-    --accent: #1e293b;
-    --accent-foreground: #f8fafc;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --ring: #00d9a5;
-  }
-}
-
-/* Light theme - 클래스 기반 방식 (수동 토글용) */
-.light {
+/* Light theme - 클래스 기반 방식 (기본) */
+.light,
+:root:not(.dark) {
   --background: #ffffff;
   --foreground: #171717;
   --muted: #f5f5f5;
@@ -75,6 +81,7 @@
   --border: #e5e5e5;
   --input: #ffffff;
   --primary: #00d9a5;
+  --primary-hover: #00c896;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -94,6 +101,7 @@
   --border: #262626;
   --input: #262626;
   --primary: #00d9a5;
+  --primary-hover: #00c896;
   --primary-foreground: #ffffff;
   --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
@@ -102,6 +110,28 @@
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --ring: #00d9a5;
+}
+
+/* 시스템 다크모드 자동 감지 (시스템 설정이 dark일 때만) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+    --border: #262626;
+    --input: #262626;
+    --primary: #00d9a5;
+    --primary-hover: #00c896;
+    --primary-foreground: #ffffff;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --ring: #00d9a5;
+  }
 }
 
 /* Reset and base styles */
@@ -125,6 +155,45 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Container utilities */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
 }
 
 /* Focus styles for accessibility */
@@ -276,4 +345,103 @@ select:focus {
 
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
+}
+
+/* Utility classes - 반복되는 Tailwind 패턴 추상화 */
+
+/* 텍스트 색상 유틸리티 */
+.text-foreground {
+  color: var(--foreground);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+/* 배경 색상 유틸리티 */
+.bg-background {
+  background-color: var(--background);
+}
+
+.bg-muted {
+  background-color: var(--muted);
+}
+
+.bg-input {
+  background-color: var(--input);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.hover\:bg-primary:hover {
+  background-color: var(--primary);
+}
+
+.hover\:bg-muted:hover {
+  background-color: var(--muted);
+}
+
+/* 테두리 유틸리티 */
+.border-border {
+  border-color: var(--border);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+
+.hover\:border-primary:hover {
+  border-color: var(--primary);
+}
+
+/* Input 기본 스타일 */
+.input-base {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--input);
+  color: var(--foreground);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* Button outline primary 스타일 */
+.btn-outline-primary {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  transition: all 0.2s ease-in-out;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+/* Link 기본 스타일 제거 */
+a {
+  text-decoration: none;
+}
+
+a:hover,
+a:visited,
+a:active,
+a:focus {
+  text-decoration: none;
 }

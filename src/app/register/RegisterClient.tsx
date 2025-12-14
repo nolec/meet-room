@@ -71,13 +71,13 @@ export default function RegisterClient() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full mx-auto space-y-8">
+        <div className="text-center">
+          <h2 className="mt-6 text-3xl font-extrabold text-foreground">
             실시간 커뮤니티 플랫폼
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             회원가입하고 새로운 인연을 만들어보세요
           </p>
         </div>
@@ -126,7 +126,7 @@ export default function RegisterClient() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   나이 (선택)
                 </label>
                 <input
@@ -137,12 +137,12 @@ export default function RegisterClient() {
                   onChange={handleChange}
                   min="18"
                   max="100"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="input-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   성별 (선택)
                 </label>
                 <select
@@ -151,7 +151,7 @@ export default function RegisterClient() {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, gender: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="input-base"
                 >
                   <option value="">선택 안 함</option>
                   <option value="male">남성</option>
@@ -162,7 +162,7 @@ export default function RegisterClient() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 자기소개 (선택)
               </label>
               <textarea
@@ -173,12 +173,12 @@ export default function RegisterClient() {
                 }
                 placeholder="간단한 자기소개를 작성해주세요"
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                className="input-base"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 관심사 (선택, 여러 개 선택 가능)
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -218,7 +218,7 @@ export default function RegisterClient() {
                       }}
                       className="rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="text-sm text-foreground">
                       {interest}
                     </span>
                   </label>
@@ -241,7 +241,7 @@ export default function RegisterClient() {
           </div>
 
           <div className="text-center">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-muted-foreground">
               이미 계정이 있으신가요?{" "}
               <CustomLink href="/login" variant="primary">
                 로그인하기

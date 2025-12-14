@@ -23,9 +23,14 @@ export interface BaseComponentProps {
 export interface ButtonProps extends BaseComponentProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit" | "reset";
   loading?: boolean;
+  isLoading?: boolean; // alias for loading
+  isError?: boolean;
+  as?: React.ElementType;
+  "aria-label"?: string;
+  href?: string; // for Link component
 }
 
 // 입력 필드 Props

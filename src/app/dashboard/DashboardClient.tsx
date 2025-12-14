@@ -168,10 +168,10 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* 헤더 */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground">
             안녕하세요, {user.user_metadata?.name || user.email}님!
           </h1>
@@ -186,7 +186,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
       {/* 주변 가게 섹션 */}
       <div className="space-y-6 mb-12">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-2xl font-bold text-foreground">내 주변 가게</h2>
           <Button variant="primary" onClick={() => router.push("/places/new")}>
             가게 등록하기

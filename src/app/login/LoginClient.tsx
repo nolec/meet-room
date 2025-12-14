@@ -52,13 +52,13 @@ export default function LoginClient() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full mx-auto space-y-8">
+        <div className="text-center">
+          <h2 className="mt-6 text-3xl font-extrabold text-foreground">
             실시간 커뮤니티 플랫폼
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             로그인하고 새로운 인연을 만나보세요
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function LoginClient() {
           </div>
 
           <div className="text-center">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-muted-foreground">
               계정이 없으신가요?{" "}
               <CustomLink href="/register" variant="primary">
                 회원가입하기
