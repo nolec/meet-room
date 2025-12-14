@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>너브스 - 구독 관리 플랫폼 구조 분석</title>
+    <title>Meet Room - 만남 주선 플랫폼 구조 분석</title>
     <style>
       * {
         margin: 0;
@@ -111,6 +111,10 @@
 
       .file-tree .type {
         color: #38b2ac;
+      }
+
+      .file-tree .service {
+        color: #e53e3e;
       }
 
       .code-block {
@@ -223,7 +227,6 @@
         background: linear-gradient(90deg, #4facfe, #00f2fe);
       }
 
-      /* 리스트 스타일 조정 */
       ul {
         padding-left: 0;
         margin-left: 0;
@@ -262,15 +265,15 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🚀 Subwatch</h1>
-        <p>구독 관리 플랫폼 - 프로젝트 구조 완전 분석</p>
+        <h1>☕ Meet Room</h1>
+        <p>카페/장소 기반 만남 주선 플랫폼 - 프로젝트 구조 완전 분석</p>
       </div>
 
       <!-- 프로젝트 구조 -->
       <div class="section">
         <h2>📁 프로젝트 구조</h2>
         <div class="file-tree">
-          <pre>sub-man/
+          <pre>meet-room/
 ├── <span class="folder">src/</span>
 │   ├── <span class="folder">app/</span>                    # Next.js App Router
 │   │   ├── <span class="folder">api/</span>               # API Routes (백엔드)
@@ -278,23 +281,37 @@
 │   │   │   │   ├── <span class="api">login/route.ts</span>
 │   │   │   │   ├── <span class="api">register/route.ts</span>
 │   │   │   │   └── <span class="api">logout/route.ts</span>
-│   │   │   └── <span class="folder">subscriptions/</span>  # 구독 관리 API
-│   │   │       ├── <span class="api">route.ts</span>   # GET, POST
-│   │   │       └── <span class="api">[id]/route.ts</span> # GET, PUT, DELETE
+│   │   │   ├── <span class="folder">places/</span>        # 장소 관리 API
+│   │   │   │   ├── <span class="api">route.ts</span>      # GET, POST
+│   │   │   │   ├── <span class="api">[id]/route.ts</span> # GET, PUT, DELETE
+│   │   │   │   └── <span class="api">nearby/route.ts</span> # 주변 장소 검색
+│   │   │   ├── <span class="folder">rooms/</span>         # 방 관리 API
+│   │   │   │   ├── <span class="api">route.ts</span>      # GET, POST
+│   │   │   │   ├── <span class="api">[id]/route.ts</span> # GET, PUT, DELETE
+│   │   │   │   ├── <span class="api">[id]/participants/route.ts</span> # 참여자 관리
+│   │   │   │   └── <span class="api">[id]/messages/route.ts</span> # 메시지 관리
+│   │   │   ├── <span class="folder">interests/</span>     # 관심 표현 API
+│   │   │   │   ├── <span class="api">route.ts</span>      # GET, POST
+│   │   │   │   └── <span class="api">[id]/route.ts</span> # PUT, DELETE
+│   │   │   └── <span class="folder">matches/</span>       # 매칭 API
+│   │   │       └── <span class="api">route.ts</span>      # GET (매칭 목록)
 │   │   ├── <span class="folder">dashboard/</span>         # 대시보드 페이지
-│   │   │   ├── <span class="file">page.tsx</span>      # Server Component (SSR 인증)
+│   │   │   ├── <span class="file">page.tsx</span>      # Server Component
 │   │   │   └── <span class="file">DashboardClient.tsx</span> # Client Component
 │   │   ├── <span class="folder">login/</span>             # 로그인 페이지
-│   │   │   ├── <span class="file">page.tsx</span>      # Server Component (SSR 리다이렉트)
+│   │   │   ├── <span class="file">page.tsx</span>      # Server Component
 │   │   │   └── <span class="file">LoginClient.tsx</span>   # Client Component
 │   │   ├── <span class="folder">register/</span>          # 회원가입 페이지
-│   │   │   └── <span class="file">page.tsx</span>
+│   │   │   ├── <span class="file">page.tsx</span>
+│   │   │   └── <span class="file">RegisterClient.tsx</span>
 │   │   ├── <span class="folder">offline/</span>           # PWA 오프라인 페이지
 │   │   │   └── <span class="file">page.tsx</span>
 │   │   ├── <span class="file">layout.tsx</span>         # 루트 레이아웃 (ErrorProvider 포함)
 │   │   ├── <span class="file">page.tsx</span>           # 홈페이지
+│   │   ├── <span class="file">HomeClient.tsx</span>      # 홈 클라이언트 컴포넌트
 │   │   ├── <span class="file">globals.css</span>        # 글로벌 스타일
-│   │   └── <span class="file">manifest.ts</span>        # PWA 매니페스트
+│   │   ├── <span class="file">manifest.ts</span>        # PWA 매니페스트
+│   │   └── <span class="file">favicon.ico</span>
 │   ├── <span class="folder">components/</span>            # React 컴포넌트
 │   │   ├── <span class="folder">ui/</span>               # 디자인 시스템
 │   │   │   ├── <span class="component">Alert.tsx</span>
@@ -309,27 +326,32 @@
 │   │   ├── <span class="component">ErrorToast.tsx</span>  # 에러 토스트
 │   │   └── <span class="component">theme-toggle.tsx</span>   # 다크모드 토글
 │   ├── <span class="folder">contexts/</span>              # React Context
-│   │   └── <span class="context">ErrorContext.tsx</span>  # 에러 관리 컨텍스트
+│   │   └── <span class="file">ErrorContext.tsx</span>  # 에러 관리 컨텍스트
 │   ├── <span class="folder">hooks/</span>                 # 커스텀 훅
 │   │   ├── <span class="hook">useAuth.ts</span>         # 인증 훅
 │   │   ├── <span class="hook">useErrorHandler.ts</span>  # 에러 처리 훅
 │   │   ├── <span class="hook">useMounted.ts</span>      # 마운트 상태 훅
-│   │   ├── <span class="hook">useSubscriptions.ts</span> # 구독 관리 훅
 │   │   ├── <span class="hook">useTheme.ts</span>        # 테마 훅
 │   │   └── <span class="hook">index.ts</span>           # 훅 export
 │   ├── <span class="folder">lib/</span>                   # 유틸리티 라이브러리
 │   │   ├── <span class="folder">auth/</span>              # 서버 사이드 인증
-│   │   │   └── <span class="file">server.ts</span>      # SSR 인증 가드
+│   │   │   ├── <span class="file">server.ts</span>      # SSR 인증 가드
+│   │   │   └── <span class="file">middleware.ts</span>   # 인증 미들웨어
 │   │   ├── <span class="folder">supabase/</span>          # Supabase 클라이언트
 │   │   │   ├── <span class="file">client.ts</span>      # 클라이언트 사이드
 │   │   │   └── <span class="file">server.ts</span>       # 서버 사이드
 │   │   ├── <span class="folder">database/</span>          # 데이터베이스 스키마
-│   │   │   └── <span class="file">schema.sql</span>     # SQL 스키마
+│   │   │   ├── <span class="file">schema.sql</span>     # SQL 스키마
+│   │   │   └── <span class="folder">migrations/</span>
+│   │   │       └── <span class="file">remove_owner_verification.sql</span>
 │   │   └── <span class="file">utils.ts</span>           # 유틸리티 함수
+│   ├── <span class="folder">services/</span>               # 외부 서비스 통합
+│   │   └── <span class="service">naverLocalService.ts</span> # 네이버 Local Search API
 │   ├── <span class="folder">types/</span>                 # TypeScript 타입
 │   │   ├── <span class="type">database.ts</span>        # DB 타입 정의
 │   │   ├── <span class="type">api.ts</span>             # API 타입 정의
 │   │   ├── <span class="type">error.ts</span>           # 에러 타입 정의
+│   │   ├── <span class="type">store.ts</span>           # 스토어 타입
 │   │   └── <span class="type">theme.ts</span>           # 테마 타입
 │   └── <span class="folder">utils/</span>                 # 유틸리티 함수
 │       └── <span class="file">auth.ts</span>            # 인증 유틸리티
@@ -337,7 +359,14 @@
 │   ├── <span class="folder">common/</span>               # 공통 스크립트
 │   │   └── <span class="file">register-sw.js</span>   # 서비스 워커 등록
 │   └── <span class="file">sw.js</span>                # 서비스 워커
-└── <span class="file">package.json</span>             # 의존성 관리</pre>
+├── <span class="file">package.json</span>             # 의존성 관리
+├── <span class="file">tsconfig.json</span>            # TypeScript 설정
+├── <span class="file">next.config.ts</span>           # Next.js 설정
+├── <span class="file">postcss.config.mjs</span>       # PostCSS 설정
+├── <span class="file">eslint.config.mjs</span>        # ESLint 설정
+├── <span class="file">README.md</span>               # 프로젝트 문서
+├── <span class="file">NAVER_API_SETUP.md</span>       # 네이버 API 설정 가이드
+└── <span class="file">debug-rls.sql</span>           # RLS 디버깅 스크립트</pre>
         </div>
       </div>
 
@@ -365,106 +394,52 @@
             <h4>PWA</h4>
             <p>오프라인 지원<br />앱 설치<br />서비스 워커</p>
           </div>
+          <div class="tech-item">
+            <h4>Naver API</h4>
+            <p>Local Search API<br />장소 검색<br />좌표 변환</p>
+          </div>
         </div>
       </div>
 
-      <!-- 인증 시스템 -->
+      <!-- 핵심 기능 -->
       <div class="section">
-        <h2>🔐 인증 시스템</h2>
-        <h3>Supabase Auth 구조</h3>
-        <div class="code-block">
-          <pre>
-// 클라이언트 사이드 (브라우저)
-const supabase = createClient()
-await supabase.auth.signInWithPassword({ email, password })
+        <h2>🎯 핵심 기능</h2>
+        <h3>1. 장소 관리 (Places)</h3>
+        <ul>
+          <li>카페, 식당, 바, 도서관 등 장소 등록 및 관리</li>
+          <li>네이버 Local Search API를 통한 주변 장소 검색</li>
+          <li>위치 기반 검색 및 거리 계산</li>
+          <li>카테고리별 필터링 (cafe, restaurant, bar, library, co_working, other)</li>
+        </ul>
 
-// 서버 사이드 (API Routes)
-const supabase = await createClient()
-const { data: { user } } = await supabase.auth.getUser()</pre
-          >
-        </div>
+        <h3>2. 방 관리 (Rooms)</h3>
+        <ul>
+          <li>각 장소의 좌석/공간별 방 생성</li>
+          <li>최대 참여 인원 제한</li>
+          <li>공개/비공개/초대 전용 방 타입 지원</li>
+          <li>실시간 참여자 관리</li>
+        </ul>
 
-        <h3>인증 플로우</h3>
-        <div class="flow-diagram">
-          <div class="flow-step">1. 사용자 로그인</div>
-          <div class="arrow">→</div>
-          <div class="flow-step">2. JWT 토큰 생성</div>
-          <div class="arrow">→</div>
-          <div class="flow-step">3. 쿠키 저장</div>
-          <div class="arrow">→</div>
-          <div class="flow-step">4. API 인증</div>
-        </div>
-      </div>
+        <h3>3. 실시간 채팅</h3>
+        <ul>
+          <li>방별 채팅 메시지 관리</li>
+          <li>텍스트, 이미지, 시스템 메시지 지원</li>
+          <li>참여자만 메시지 조회/전송 가능</li>
+        </ul>
 
-      <!-- 데이터베이스 -->
-      <!-- 새로운 기능들 -->
-      <div class="section">
-        <h2>🆕 최신 기능들</h2>
+        <h3>4. 관심 표현 및 매칭</h3>
+        <ul>
+          <li>사용자 간 관심 표현 (Interest)</li>
+          <li>양방향 관심 표현 시 자동 매칭</li>
+          <li>매칭 상태 관리 (active, unmatched)</li>
+        </ul>
 
-        <h3>🔐 SSR 기반 인증 가드</h3>
-        <div class="code-block">
-          <pre>
-// 서버 사이드에서 인증 확인 및 리다이렉트
-export async function requireAuth() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (!session?.user) {
-    redirect("/login");  // 플리커링 없는 즉시 리다이렉트
-  }
-  
-  return session.user;
-}
-
-// 이미 로그인된 사용자 리다이렉트
-export async function redirectIfAuthenticated(redirectTo = "/dashboard") {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  if (session?.user) {
-    redirect(redirectTo);
-  }
-}</pre
-          >
-        </div>
-
-        <h3>🎨 디자인 시스템</h3>
-        <div class="code-block">
-          <pre>
-// 재사용 가능한 UI 컴포넌트들
-- Button (primary, secondary, outline, ghost)
-- Input (다양한 variant와 size)
-- Card (Header, Body, Footer)
-- Badge (success, warning, danger, primary)
-- Alert (info, warning, error, success)
-- Loading (Spinner, Screen)
-- CustomLink (Next.js Link 래퍼)</pre
-          >
-        </div>
-
-        <h3>🚨 중앙집중식 에러 처리</h3>
-        <div class="code-block">
-          <pre>
-// ErrorContext + ErrorToast 시스템
-- 전역 에러 상태 관리
-- 자동 토스트 알림 (5초 후 사라짐)
-- 에러 타입별 분류 (auth, validation, server, network)
-- Supabase/API 에러 자동 처리
-- 개발자 친화적 에러 로깅</pre
-          >
-        </div>
-
-        <h3>📱 PWA 기능</h3>
-        <div class="code-block">
-          <pre>
-// Progressive Web App 기능
-- 오프라인 페이지 지원
-- 서비스 워커 자동 등록
-- 앱 설치 가능 (manifest.ts)
-- 다크/라이트 모드 지원
-- 반응형 디자인</pre
-          >
-        </div>
+        <h3>5. 사용자 인증</h3>
+        <ul>
+          <li>Supabase Auth 기반 인증</li>
+          <li>JWT 토큰 관리</li>
+          <li>SSR 기반 인증 가드</li>
+        </ul>
       </div>
 
       <!-- 데이터베이스 구조 -->
@@ -475,134 +450,193 @@ export async function redirectIfAuthenticated(redirectTo = "/dashboard") {
           <pre>
 -- 사용자 프로필
 profiles (
-  id (UUID, PK), email, name, 
+  id (UUID, PK), email, name, avatar_url, bio,
+  age, gender, interests (TEXT[]), timezone, language,
   created_at, updated_at
 )
 
--- 사용자 설정
-user_preferences (
-  id, user_id (FK), theme, language, 
-  notification_settings, created_at, updated_at
+-- 카페/가게
+places (
+  id (UUID, PK), name, address, latitude, longitude,
+  category (cafe|restaurant|bar|library|co_working|other),
+  description, total_seats, wifi_available, power_outlets,
+  created_by (FK), created_at, updated_at
 )
 
--- 구독 테이블 (메인)
-subscriptions (
-  id (UUID, PK), user_id (FK), service_name, 
-  plan_name, price, currency, billing_cycle, 
-  next_billing_date, status, source, metadata, 
+-- 방 (각 장소의 좌석/공간)
+rooms (
+  id (UUID, PK), place_id (FK), name, seat_number,
+  description, max_participants, current_participants,
+  is_active, room_type (public|private|invite_only),
+  created_by (FK), created_at, updated_at
+)
+
+-- 방 참여자
+room_participants (
+  id (UUID, PK), room_id (FK), user_id (FK),
+  joined_at, last_active_at, status (active|left|removed)
+)
+
+-- 채팅 메시지
+messages (
+  id (UUID, PK), room_id (FK), user_id (FK),
+  content, message_type (text|image|system), created_at
+)
+
+-- 관심 표현
+interests (
+  id (UUID, PK), from_user_id (FK), to_user_id (FK),
+  room_id (FK), status (pending|accepted|rejected|withdrawn),
   created_at, updated_at
 )
 
--- 구독 히스토리 (가격 변동 추적)
-subscription_history (
-  id, subscription_id (FK), old_price, 
-  new_price, changed_at, reason
+-- 매칭 (양방향 관심 표현)
+matches (
+  id (UUID, PK), user1_id (FK), user2_id (FK), room_id (FK),
+  interest1_id (FK), interest2_id (FK),
+  matched_at, status (active|unmatched)
 )
 
--- 알림 설정
-notifications (
-  id, user_id (FK), subscription_id (FK), 
-  type, days_before, is_enabled, channels
-)</pre
-          >
+-- 신고
+reports (
+  id (UUID, PK), reported_user_id (FK), reporter_user_id (FK),
+  room_id (FK), reason, status (pending|reviewed|resolved|dismissed),
+  created_at
+)</pre>
         </div>
 
         <h3>RLS (Row Level Security)</h3>
         <div class="highlight">
           <strong>보안 정책:</strong> 사용자는 자신의 데이터만 접근 가능<br />
-          <code
-            >-- 프로필 테이블 CREATE POLICY "Users can view own profile" ON
-            profiles FOR SELECT USING (auth.uid() = id); CREATE POLICY "Users
-            can insert own profile" ON profiles FOR INSERT WITH CHECK
-            (auth.uid() = id); -- 구독 테이블 CREATE POLICY "Users can view own
-            subscriptions" ON subscriptions FOR SELECT USING (auth.uid() =
-            user_id); CREATE POLICY "Users can manage own subscriptions" ON
-            subscriptions FOR ALL USING (auth.uid() = user_id); -- 사용자 설정
-            CREATE POLICY "Users can manage own preferences" ON user_preferences
-            FOR ALL USING (auth.uid() = user_id);</code
-          >
+          <ul>
+            <li>프로필: 자신의 프로필 수정, 모든 프로필 조회 가능</li>
+            <li>장소: 모든 사용자 조회 가능, 생성자만 수정/삭제</li>
+            <li>방: 활성화된 방은 모든 사용자 조회 가능</li>
+            <li>참여자: 참여한 방의 참여자만 조회 가능</li>
+            <li>메시지: 참여한 방의 메시지만 조회/전송 가능</li>
+            <li>관심 표현: 자신이 보낸/받은 관심 표현만 조회 가능</li>
+            <li>매칭: 자신이 포함된 매칭만 조회 가능</li>
+          </ul>
         </div>
       </div>
 
       <!-- API 구조 -->
       <div class="section">
         <h2>🚀 API 구조</h2>
-        <h3>RESTful API 패턴</h3>
+        <h3>RESTful API 엔드포인트</h3>
         <div class="code-block">
           <pre>
-// 구독 관리 API
-GET    /api/subscriptions        # 목록 조회
-POST   /api/subscriptions        # 생성
-GET    /api/subscriptions/[id]   # 단일 조회
-PUT    /api/subscriptions/[id]   # 수정
-DELETE /api/subscriptions/[id]   # 삭제
-
 // 인증 API
 POST   /api/auth/login          # 로그인
 POST   /api/auth/register       # 회원가입
-POST   /api/auth/logout         # 로그아웃</pre
-          >
-        </div>
+POST   /api/auth/logout         # 로그아웃
 
-        <h3>타입 안전성</h3>
+// 장소 관리 API
+GET    /api/places              # 장소 목록 조회
+POST   /api/places              # 장소 생성
+GET    /api/places/[id]         # 단일 장소 조회
+PUT    /api/places/[id]         # 장소 수정
+DELETE /api/places/[id]         # 장소 삭제
+GET    /api/places/nearby       # 주변 장소 검색 (네이버 API 연동)
+
+// 방 관리 API
+GET    /api/rooms               # 방 목록 조회
+POST   /api/rooms               # 방 생성
+GET    /api/rooms/[id]          # 단일 방 조회
+PUT    /api/rooms/[id]          # 방 수정
+DELETE /api/rooms/[id]          # 방 삭제
+GET    /api/rooms/[id]/participants  # 참여자 목록
+POST   /api/rooms/[id]/participants  # 참여자 추가
+GET    /api/rooms/[id]/messages      # 메시지 목록
+POST   /api/rooms/[id]/messages      # 메시지 전송
+
+// 관심 표현 API
+GET    /api/interests           # 관심 표현 목록 조회
+POST   /api/interests           # 관심 표현 생성
+PUT    /api/interests/[id]      # 관심 표현 수정 (수락/거절)
+DELETE /api/interests/[id]      # 관심 표현 삭제
+
+// 매칭 API
+GET    /api/matches             # 매칭 목록 조회</pre>
+        </div>
+      </div>
+
+      <!-- 외부 서비스 통합 -->
+      <div class="section">
+        <h2>🌐 외부 서비스 통합</h2>
+        <h3>네이버 Local Search API</h3>
         <div class="code-block">
           <pre>
-// 요청 타입
-interface CreateSubscriptionRequest {
-  service_name: string;
-  price: number;
-  billing_cycle: 'weekly' | 'monthly' | 'yearly';
-}
+// NaverLocalService 클래스
+- searchNearbyPlaces(): 주변 가게 검색
+- searchByCategory(): 카테고리별 검색
+- 좌표 변환: 네이버 TM 좌표계 → WGS84 (위경도)
+- 거리 계산: Haversine 공식 사용
 
-// 응답 타입
-interface SubscriptionResponse {
-  subscription: Subscription;
-}</pre
-          >
+// 주요 기능
+- 카페, 식당, 바 등 카테고리별 검색
+- 사용자 위치 기반 거리 계산
+- 최대 5개 결과 반환 (네이버 API 제한)
+- 100km 이내 가게만 필터링</pre>
         </div>
       </div>
 
       <!-- 프론트엔드 구조 -->
       <div class="section">
         <h2>🎨 프론트엔드 구조</h2>
-        <h3>React 훅 패턴</h3>
-        <div class="code-block">
-          <pre>
-// 상태 관리 + API 호출을 하나로
-const { subscriptions, loading, createSubscription } = useSubscriptions();
-
-// 인증 상태 관리
-const { user, signIn, signOut } = useAuth();</pre
-          >
-        </div>
-
-        <h3>컴포넌트 구조</h3>
+        <h3>컴포넌트 아키텍처</h3>
         <div class="code-block">
           <pre>
 // 서버 컴포넌트 (기본)
-export default function Page() { /* 서버에서 렌더링 */ }
+- page.tsx: Next.js 페이지 (서버에서 렌더링)
+- layout.tsx: 레이아웃 컴포넌트
 
 // 클라이언트 컴포넌트 (상호작용)
-"use client";
-export default function InteractiveComponent() { /* 브라우저에서 렌더링 */ }</pre
-          >
+- *Client.tsx: "use client" 지시어 사용
+- DashboardClient.tsx, LoginClient.tsx, RegisterClient.tsx, HomeClient.tsx
+
+// UI 컴포넌트 (재사용 가능)
+- Button, Input, Card, Badge, Alert, Loading, Link
+- theme-toggle: 다크모드 토글</pre>
         </div>
+
+        <h3>커스텀 훅</h3>
+        <ul>
+          <li><strong>useAuth:</strong> 인증 상태 관리 및 로그인/로그아웃</li>
+          <li><strong>useErrorHandler:</strong> 에러 처리 및 토스트 표시</li>
+          <li><strong>useMounted:</strong> 클라이언트 마운트 상태 확인</li>
+          <li><strong>useTheme:</strong> 다크/라이트 모드 관리</li>
+        </ul>
+
+        <h3>Context API</h3>
+        <ul>
+          <li><strong>ErrorContext:</strong> 전역 에러 상태 관리 및 토스트 알림</li>
+        </ul>
       </div>
 
       <!-- 데이터 플로우 -->
       <div class="section">
-        <h2>🔄 데이터 플로우</h2>
-        <h3>구독 추가 플로우</h3>
+        <h2>🔄 주요 데이터 플로우</h2>
+        <h3>방 생성 및 참여 플로우</h3>
         <div class="flow-diagram">
-          <div class="flow-step">1. 폼 입력</div>
+          <div class="flow-step">1. 장소 선택</div>
           <div class="arrow">→</div>
-          <div class="flow-step">2. 훅 호출</div>
+          <div class="flow-step">2. 방 생성</div>
           <div class="arrow">→</div>
-          <div class="flow-step">3. API 요청</div>
+          <div class="flow-step">3. 참여자 입장</div>
           <div class="arrow">→</div>
-          <div class="flow-step">4. DB 저장</div>
+          <div class="flow-step">4. 채팅 시작</div>
+        </div>
+
+        <h3>매칭 플로우</h3>
+        <div class="flow-diagram">
+          <div class="flow-step">1. 방에서 만남</div>
           <div class="arrow">→</div>
-          <div class="flow-step">5. 상태 업데이트</div>
+          <div class="flow-step">2. 관심 표현</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">3. 상대방 수락</div>
+          <div class="arrow">→</div>
+          <div class="flow-step">4. 매칭 완료</div>
         </div>
 
         <h3>인증 플로우</h3>
@@ -637,9 +671,7 @@ export default function InteractiveComponent() { /* 브라우저에서 렌더링
         <h3>Next.js App Router</h3>
         <ul>
           <li><strong>서버 컴포넌트:</strong> 기본적으로 서버에서 렌더링</li>
-          <li>
-            <strong>클라이언트 컴포넌트:</strong> "use client" 지시어 필요
-          </li>
+          <li><strong>클라이언트 컴포넌트:</strong> "use client" 지시어 필요</li>
           <li><strong>API Routes:</strong> app/api/ 폴더에 함수 export</li>
           <li><strong>라우팅:</strong> 폴더 구조 = URL 구조</li>
         </ul>
@@ -652,11 +684,61 @@ export default function InteractiveComponent() { /* 브라우저에서 렌더링
           <li><strong>클라이언트/서버:</strong> 환경별 클라이언트 분리</li>
         </ul>
 
-        <h3>TypeScript</h3>
+        <h3>타입 안전성</h3>
         <ul>
-          <li><strong>타입 안전성:</strong> 컴파일 타임 에러 방지</li>
-          <li><strong>인터페이스:</strong> API 계약 정의</li>
-          <li><strong>제네릭:</strong> 재사용 가능한 타입</li>
+          <li><strong>데이터베이스 타입:</strong> database.ts에 모든 테이블 타입 정의</li>
+          <li><strong>API 타입:</strong> api.ts에 요청/응답 타입 정의</li>
+          <li><strong>에러 타입:</strong> error.ts에 에러 분류</li>
+        </ul>
+      </div>
+
+      <!-- 특별 기능 -->
+      <div class="section">
+        <h2>🆕 특별 기능</h2>
+        <h3>🔐 SSR 기반 인증 가드</h3>
+        <div class="code-block">
+          <pre>
+// 서버 사이드에서 인증 확인 및 리다이렉트
+export async function requireAuth() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session?.user) {
+    redirect("/login");  // 플리커링 없는 즉시 리다이렉트
+  }
+  
+  return session.user;
+}</pre>
+        </div>
+
+        <h3>🎨 디자인 시스템</h3>
+        <ul>
+          <li>재사용 가능한 UI 컴포넌트 (Button, Input, Card, Badge, Alert, Loading)</li>
+          <li>다크/라이트 모드 지원</li>
+          <li>반응형 디자인</li>
+        </ul>
+
+        <h3>🚨 중앙집중식 에러 처리</h3>
+        <ul>
+          <li>ErrorContext + ErrorToast 시스템</li>
+          <li>전역 에러 상태 관리</li>
+          <li>자동 토스트 알림 (5초 후 사라짐)</li>
+          <li>에러 타입별 분류 (auth, validation, server, network)</li>
+        </ul>
+
+        <h3>📱 PWA 기능</h3>
+        <ul>
+          <li>오프라인 페이지 지원</li>
+          <li>서비스 워커 자동 등록</li>
+          <li>앱 설치 가능 (manifest.ts)</li>
+        </ul>
+
+        <h3>🗺️ 위치 기반 서비스</h3>
+        <ul>
+          <li>네이버 Local Search API 통합</li>
+          <li>주변 장소 검색</li>
+          <li>거리 계산 및 정렬</li>
+          <li>좌표 변환 (TM → WGS84)</li>
         </ul>
       </div>
 
@@ -664,12 +746,13 @@ export default function InteractiveComponent() { /* 브라우저에서 렌더링
         <h2>🎯 결론</h2>
         <div class="highlight">
           <h3>
-            이 구조로 확장 가능하고 안전한 구독 관리 플랫폼을 만들었습니다!
+            카페/장소 기반 만남 주선 플랫폼의 완전한 구조입니다!
           </h3>
           <p>• <strong>확장성:</strong> 모듈화된 구조로 기능 추가 용이</p>
-          <p>• <strong>안전성:</strong> 다층 보안 시스템</p>
+          <p>• <strong>안전성:</strong> 다층 보안 시스템 (RLS, JWT, TypeScript)</p>
           <p>• <strong>타입 안전성:</strong> TypeScript로 런타임 에러 방지</p>
-          <p>• <strong>사용자 경험:</strong> PWA로 앱과 같은 경험</p>
+          <p>• <strong>사용자 경험:</strong> PWA로 앱과 같은 경험, 실시간 채팅</p>
+          <p>• <strong>위치 기반:</strong> 네이버 API 통합으로 정확한 장소 검색</p>
         </div>
       </div>
     </div>
