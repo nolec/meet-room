@@ -1,6 +1,7 @@
 // UI 컴포넌트들을 한 곳에서 export
 export { Alert } from "./Alert";
 export { Badge, type BadgeVariant } from "./Badge";
+export { EmptyState } from "./EmptyState";
 export { Button } from "./Button";
 export { Card, CardBody, CardFooter, CardHeader } from "./Card";
 export { Input } from "./Input";

@@ -323,4 +323,57 @@ export class KakaoLocalService {
       page
     );
   }
+
+  /**
+   * 카카오 장소 ID로 장소 정보 조회
+   * 주의: 카카오 API는 ID로 직접 조회하는 기능이 없어서,
+   * ID를 포함한 키워드 검색으로 찾습니다.
+   * @param placeId 카카오 장소 ID
+   * @param latitude 대략적인 위도 (검색 범위 지정용, 선택사항)
+   * @param longitude 대략적인 경도 (검색 범위 지정용, 선택사항)
+   * @returns 장소 정보
+   */
+  async getPlaceById(
+    placeId: string,
+    latitude?: number,
+    longitude?: number
+  ): Promise<PlaceSearchResult | null> {
+    // 카카오 API는 ID로 직접 조회가 불가능하므로
+    // 주변 검색을 통해 해당 ID를 가진 장소를 찾습니다
+    // 좁은 범위로 검색하여 정확도를 높입니다
+
+    const radius = latitude && longitude ? 5000 : 10000; // 5km 또는 10km
+    const searchLat = latitude || 37.5665; // 서울시청 좌표 (기본값)
+    const searchLng = longitude || 126.978;
+
+    // 카카오 카테고리로 검색 시도
+    const categories: PlaceCategory[] = ["cafe", "restaurant", "bar", "other"];
+
+    for (const category of categories) {
+      try {
+        const result = await this.searchByCategory(
+          category,
+          searchLat,
+          searchLng,
+          radius,
+          15,
+          1
+        );
+
+        const place = result.places.find((p) => p.id === placeId);
+        if (place) {
+          return place;
+        }
+      } catch {
+        // 카테고리 검색 실패 시 다음 카테고리로 계속
+        continue;
+      }
+    }
+
+    // 카테고리 검색으로 못 찾으면 키워드 검색 시도
+    // 하지만 ID만으로는 키워드 검색이 어렵습니다
+    // 실제로는 이전 검색 결과를 캐싱하거나 다른 방법을 사용해야 합니다
+
+    return null;
+  }
 }

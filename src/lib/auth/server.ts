@@ -8,14 +8,15 @@ export async function requireAuth() {
   const supabase = await createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (error || !user) {
     redirect("/login");
   }
 
-  return session.user;
+  return user;
 }
 
 /**
@@ -27,10 +28,10 @@ export async function redirectIfAuthenticated(
   const supabase = await createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session?.user) {
+  if (user) {
     redirect(redirectTo);
   }
 }
@@ -42,8 +43,8 @@ export async function getServerUser() {
   const supabase = await createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return session?.user || null;
+  return user || null;
 }

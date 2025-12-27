@@ -1,6 +1,13 @@
 "use client";
 
-import { Badge, Button, Card, CardBody, CardHeader } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  EmptyState,
+} from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { PlaceSearchResult } from "@/services/kakaoLocalService";
 import { User } from "@supabase/supabase-js";
@@ -190,11 +197,12 @@ export default function DashboardClient({ user }: DashboardClientProps) {
         </h2>
 
         {activePlaces.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              활성화된 방이 있는 가게가 없습니다.
-            </p>
-          </div>
+          <EmptyState
+            message="현재 활성화된 방이 있는 가게가 없습니다."
+            showBackButton={false}
+            showHomeButton={false}
+            className="py-8"
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activePlaces.map((place) => (
@@ -243,9 +251,6 @@ export default function DashboardClient({ user }: DashboardClientProps) {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-2xl font-bold text-foreground">내 주변 가게</h2>
-          <Button variant="primary" onClick={() => router.push("/places/new")}>
-            가게 등록하기
-          </Button>
         </div>
 
         {loading ? (
@@ -254,16 +259,20 @@ export default function DashboardClient({ user }: DashboardClientProps) {
             <p className="text-muted-foreground">가게 정보를 불러오는 중...</p>
           </div>
         ) : locationError ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">{locationError}</p>
-            <p className="text-sm text-muted-foreground">
-              위치 정보 접근 권한을 허용해주세요.
-            </p>
-          </div>
+          <EmptyState
+            title="위치 정보 오류"
+            message={`${locationError}\n위치 정보 접근 권한을 허용해주세요.`}
+            showBackButton={false}
+            showHomeButton={false}
+            className="py-8"
+          />
         ) : nearbyPlaces.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">주변에 가게가 없습니다.</p>
-          </div>
+          <EmptyState
+            message="주변에 가게가 없습니다."
+            showBackButton={false}
+            showHomeButton={false}
+            className="py-8"
+          />
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

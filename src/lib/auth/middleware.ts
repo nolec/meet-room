@@ -20,16 +20,16 @@ export async function requireAuth(): Promise<AuthResult | null> {
     const supabase = await createClient();
 
     const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (sessionError || !session?.user) {
+    if (userError || !user) {
       return null;
     }
 
     return {
-      user: session.user,
+      user,
       supabase,
     };
   } catch (error) {

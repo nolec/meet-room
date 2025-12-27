@@ -44,7 +44,9 @@ export default function RootLayout({
           </header>
 
           {/* 메인 콘텐츠 */}
-          <main className="bg-background">{children}</main>
+          <main className="bg-background flex-1 overflow-y-auto">
+            {children}
+          </main>
         </ErrorProvider>
 
         <Script src="/common/register-sw.js" />
